@@ -31,21 +31,23 @@ root = tk.Tk()
 root.geometry("800x300")
 root.title("Игра Камень/Ножницы/Бумага")
 
-# Обработка фото 
-img = PILImage.open('scissors.png')
-scaled = img.resize((100, 100))
-photo = ImageTk.PhotoImage(scaled)
+# Вызовы функций для размещение всех трех картинок
 
-# TO DO -> Уберите строчки 42-48 и сделайте вызовы 
-# функции для размещение всех трех картинок
-
-# Создание виджета картинки
-label = tk.Label(root, image=photo)
-label.image = photo
-label.name = "scissors"
-label.place(x=650, y=80)
-label.configure(cursor="hand2")
-label.bind("<Button-1>", on_click)
+create_widget(root=root,
+              img_path="scissors.png",
+              x=680,
+              y=80,
+              name="scissors")
+create_widget(root=root,
+              img_path="stone.png",
+              x=580,
+              y=80,
+              name="stone")
+create_widget(root=root,
+              img_path="paper.png",
+              x=480,
+              y=80,
+              name="paper")
 
 
 root.mainloop()
