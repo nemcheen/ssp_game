@@ -6,7 +6,7 @@ from main import bot_turn, player_turn, move_result, main_game, possible_move, g
 def create_move_label(root, img_path, x, y, name):
     """Создаёт лейбл с картинкой и биндит клик"""
     img = PILImage.open(img_path)
-    scaled = img.resize((150, 150), PILImage.Resampling.LANCZOS)
+    scaled = img.resize((100, 100), PILImage.Resampling.LANCZOS)
     photo = ImageTk.PhotoImage(scaled)
     
     label = tk.Label(root, image=photo, bg="gray")
@@ -26,11 +26,11 @@ def on_click(event):
 
 root = tk.Tk()
 root.configure(bg="gray")
-root.geometry("800x600")
+root.geometry("850x600")
 
-create_move_label(root, "scissors.png", 600, 50, "scissors")
-create_move_label(root, "stone.png", 400, 80, "stone")
-create_move_label(root, "paper.png", 500, 280, "paper")
+create_move_label(root, "scissors.png", 700, 50, "scissors")
+create_move_label(root, "stone.png", 600, 50, "stone")
+create_move_label(root, "paper.png", 500, 50, "paper")
 
 
 root.mainloop()
