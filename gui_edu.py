@@ -38,8 +38,12 @@ root = tk.Tk()
 root.geometry("800x300")
 root.title("Игра Камень/Ножницы/Бумага")
 
-# Вызовы функций для размещение всех трех картинок
-
+create_widget(root=root,
+              img_path="question-mark.png",
+              x=100,
+              y=80,
+              name="?",
+              clickable=False)
 create_widget(root=root,
               img_path="scissors.png",
               x=680,
