@@ -1,4 +1,6 @@
 import tkinter as tk
+from random import randint
+import time
 from PIL import ImageTk, Image as PILImage
 from main import bot_turn, move_result, possible_move
 
@@ -26,9 +28,35 @@ def create_widget(root, img_path, x, y, name: str, clickable=True):
         label.bind("<Button-1>", on_click)
     return label
 
-def bot_chose_animation():
+def bot_chose_animation(bot_label, total_delay=700):
     """ Анимация выбора хода ботом. """
-    pass  
+    image_paths = ('scissors.png', 'stone.png', 'paper.png')
+    images = []
+    for path in image_paths:
+        img = PILImage.open(path).resize((100, 100))
+        images.append(ImageTk.PhotoImage(img))
+    bot_move_number = randint(9, 11)
+    current_step = 0
+    bot_chose = '???' # Вытащите из кортежа путей "ход" бота
+    
+    def step():
+        nonlocal bot_chose, current_step
+        idx = current_step % 3
+        image = images[idx]
+        bot_label.configure(image=image)
+        bot_label.image = image
+        current_step += 1
+        if current_step <= bot_move_number:  # Включая финал
+            step_delay = total_delay // bot_move_number
+            bot_label.after(step_delay, step)
+    
+    step()
+    return bot_chose
+
+
+
+
+    
 # Для отображения картинки по умолчанию (знак вопроса)
 # используем функцию создания виджета, но модифицируем ее чтобы
 # можно было через параметр задавать будет картинка кликабельна или нет
@@ -38,12 +66,14 @@ root = tk.Tk()
 root.geometry("800x300")
 root.title("Игра Камень/Ножницы/Бумага")
 
-create_widget(root=root,
+bot_label = create_widget(root=root,
               img_path="question-mark.png",
               x=100,
               y=80,
               name="?",
               clickable=False)
+bot_move = bot_chose_animation(bot_label=bot_label)
+print(bot_move)
 create_widget(root=root,
               img_path="scissors.png",
               x=680,
