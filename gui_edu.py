@@ -24,7 +24,10 @@ def create_widget(root, img_path, x, y, name: str):
     label.configure(cursor="hand2")
     label.bind("<Button-1>", on_click)
     return label
-    
+
+def bot_chose_animation():
+    """ Анимация выбора хода ботом. """
+    pass  
 
 # Инициализация окна
 root = tk.Tk()
