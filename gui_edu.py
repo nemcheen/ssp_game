@@ -37,7 +37,7 @@ def bot_chose_animation(bot_label, total_delay=700):
         images.append(ImageTk.PhotoImage(img))
     bot_move_number = randint(9, 11)
     current_step = 0
-    bot_chose = '???' # Вытащите из кортежа путей "ход" бота
+    bot_chose = image_paths[bot_move_number % 3].split('.')[0]
     
     def step():
         nonlocal bot_chose, current_step
