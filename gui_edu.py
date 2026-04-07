@@ -8,9 +8,10 @@ def on_click(event):
     player_move = event.widget.name
     move_result(player_move, bot_turn())
 
-def create_widget():
+def create_widget(?): # праметры! , чем отличаются виджеты? 
     pass
-
+    
+    
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
