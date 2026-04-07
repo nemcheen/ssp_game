@@ -36,6 +36,9 @@ img = PILImage.open('scissors.png')
 scaled = img.resize((100, 100))
 photo = ImageTk.PhotoImage(scaled)
 
+# TO DO -> Уберите строчки 42-48 и сделайте вызовы 
+# функции для размещение всех трех картинок
+
 # Создание виджета картинки
 label = tk.Label(root, image=photo)
 label.image = photo
