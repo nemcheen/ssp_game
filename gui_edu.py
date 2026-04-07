@@ -8,6 +8,9 @@ def on_click(event):
     player_move = event.widget.name
     move_result(player_move, bot_turn())
 
+def create_widget():
+    pass
+
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
@@ -25,5 +28,6 @@ label.name = "scissors"
 label.place(x=650, y=80)
 label.configure(cursor="hand2")
 label.bind("<Button-1>", on_click)
+
 
 root.mainloop()
