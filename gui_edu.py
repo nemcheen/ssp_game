@@ -8,7 +8,7 @@ def on_click(event):
     player_move = event.widget.name
     move_result(player_move, bot_turn())
 
-def create_widget(root, img_path, x, y, name: str): 
+def create_widget(root, img_path, x, y, name: str, clickable=True): 
     """ root - основное окно / img_path - путь к картинке
         x, y - координаты для позициоирования картинки
         name - имя виджета, для отслеживание на что мы нажали"""
@@ -21,8 +21,9 @@ def create_widget(root, img_path, x, y, name: str):
     label.image = photo
     label.name = name
     label.place(x=x, y=y)
-    label.configure(cursor="hand2")
-    label.bind("<Button-1>", on_click)
+    if clickable: 
+        label.configure(cursor="hand2")
+        label.bind("<Button-1>", on_click)
     return label
 
 def bot_chose_animation():
