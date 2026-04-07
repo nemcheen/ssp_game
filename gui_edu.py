@@ -8,6 +8,7 @@ from main import bot_turn, move_result, possible_move
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
     player_move = event.widget.name
+    # нужно добавить в эту фунцию вызов анимации бота
     move_result(player_move, bot_turn())
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
@@ -53,14 +54,6 @@ def bot_chose_animation(bot_label, total_delay=700):
     step()
     return bot_chose
 
-
-
-
-    
-# Для отображения картинки по умолчанию (знак вопроса)
-# используем функцию создания виджета, но модифицируем ее чтобы
-# можно было через параметр задавать будет картинка кликабельна или нет
-
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
@@ -72,8 +65,8 @@ bot_label = create_widget(root=root,
               y=80,
               name="?",
               clickable=False)
-bot_move = bot_chose_animation(bot_label=bot_label)
-print(bot_move)
+# bot_move = bot_chose_animation(bot_label=bot_label)
+# print(bot_move)
 create_widget(root=root,
               img_path="scissors.png",
               x=680,
