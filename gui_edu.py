@@ -8,11 +8,22 @@ def on_click(event):
     player_move = event.widget.name
     move_result(player_move, bot_turn())
 
-def create_widget(root, img_path, x, y, name): 
+def create_widget(root, img_path, x, y, name: str): 
     """ root - основное окно / img_path - путь к картинке
         x, y - координаты для позициоирования картинки
         name - имя виджета, для отслеживание на что мы нажали"""
-    pass
+    
+    img = PILImage.open(img_path)
+    scaled = img.resize((100, 100))
+    photo = ImageTk.PhotoImage(scaled)
+
+    label = tk.Label(root, image=photo)
+    label.image = photo
+    label.name = name
+    label.place(x=x, y=y)
+    label.configure(cursor="hand2")
+    label.bind("<Button-1>", on_click)
+    return label
     
 
 # Инициализация окна
