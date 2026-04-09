@@ -58,7 +58,9 @@ def bot_chose_animation(bot_label, total_delay=700):
 
 def label_hide(list_obj_labels, name_label_to_show):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
-    pass
+    for item in list_obj_labels:
+        if item.name != name_label_to_show:
+            item.place_forget()  
 
 # Инициализация окна
 root = tk.Tk()
@@ -71,23 +73,24 @@ bot_label = create_widget(root=root,
               y=80,
               name="?",
               clickable=False)
-# bot_move = bot_chose_animation(bot_label=bot_label)
-# print(bot_move)
-create_widget(root=root,
+
+scissors = create_widget(root=root,
               img_path="scissors.png",
               x=680,
               y=80,
               name="scissors")
-create_widget(root=root,
+stone = create_widget(root=root,
               img_path="stone.png",
               x=580,
               y=80,
               name="stone")
-create_widget(root=root,
+paper = create_widget(root=root,
               img_path="paper.png",
               x=480,
               y=80,
               name="paper")
+
+list_of_obj_labels = [scissors, stone, paper]
 
 
 root.mainloop()
