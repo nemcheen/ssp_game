@@ -28,6 +28,8 @@ def create_widget(root, img_path, x, y, name: str, clickable=True):
     label = tk.Label(root, image=photo)
     label.image = photo
     label.name = name
+    label.x = x # !!
+    label.y = y # !!!
     label.place(x=x, y=y)
     if clickable: 
         label.configure(cursor="hand2")
@@ -71,7 +73,7 @@ def all_label_show(list_obj_labels):
     for item in list_obj_labels:
         item.place() # Чтобы в виджеты не накладывались стопкой друг на друга нужно ставить их на свои места
                     # для этого измени функцию размещения лейбла create_widget() чтобы она сохраняла координаты в отдельное поле
-                    
+
 
 # Инициализация окна
 root = tk.Tk()
