@@ -8,11 +8,12 @@ from main import bot_turn, move_result, possible_move
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
     player_move = event.widget.name
-    label_hide(root,
+    choosed = label_hide(root,
                list_obj_labels=list_obj_labels,
                name_label_to_show=player_move,
                )
     bot_move = bot_chose_animation(bot_label=bot_label)
+    attack(choosed)
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
 
@@ -49,7 +50,7 @@ def bot_chose_animation(bot_label, total_delay=700):
     bot_chose = image_paths[bot_move_number % 3].split('.')[0]
     
     def step():
-        nonlocal bot_chose, current_step
+        nonlocal current_step
         idx = current_step % 3
         image = images[idx]
         bot_label.configure(image=image)
@@ -65,35 +66,51 @@ def bot_chose_animation(bot_label, total_delay=700):
 
 def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
+    unhided = None
     for item in list_obj_labels:
         if item.name != name_label_to_show:
             item.place_forget()
-
+        else:
+            unhided = item
+    
       # через delay_ms снова показываем все
     root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
+    return unhided
 
 def all_label_show(list_obj_labels, root):
     """ Показываем все виджеты """
     for item in list_obj_labels:
         item.place(x=item.x, y=item.y)
 
-def attack(x0, y0, 
-           item, 
-           delay=800, 
+def attack(item, 
+           delay=500, 
            frames=10, 
            root_width=800, 
            root_height=300):
     """ Анимация атаки предмета. Летит в центр! """
-    item_x = item.winfo_x()
-    item_y = item.winfo_y()
+    current_x = item_x = item.winfo_x()
+    current_y = item_y = item.winfo_y()
     item_width = item.winfo_width()
     item_height = item.winfo_height()
     path_x = (item_x - root_width // 2) + item_width // 2 
     path_y = (item_y - root_height // 2) + item_height // 2 
-
+    step_x = -path_x // frames
+    step_y = -path_y // frames
+    step_delay = delay // frames
+    print(current_y, path_y, step_y)
+    cross_middle = False
     def step():
-        pass
-
+        nonlocal path_x, path_y, current_x, current_y, cross_middle
+        print(current_y, path_y, step_y)
+        if path_x * (path_x + step_x) <= 0 or path_y * (path_y + step_y) <= 0:
+            cross_middle = True
+        path_x += step_x
+        path_y += step_y
+        current_x += step_x
+        current_y += step_y
+        item.place(x=current_x, y=current_y)
+        if not cross_middle:
+            item.after(step_delay, step)
     step()
       
 
