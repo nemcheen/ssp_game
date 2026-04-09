@@ -55,6 +55,11 @@ def bot_chose_animation(bot_label, total_delay=700):
     step()
     return bot_chose
 
+
+def label_hide(list_obj_labels, name_label_to_show):
+    """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
+    pass
+
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
