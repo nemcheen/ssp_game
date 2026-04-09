@@ -8,12 +8,13 @@ from main import bot_turn, move_result, possible_move
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
     player_move = event.widget.name
-    label_hide(list_obj_labels=list_obj_labels,
-               name_label_to_show=player_move)
+    label_hide(root,
+               list_obj_labels=list_obj_labels,
+               name_label_to_show=player_move,
+               )
     bot_move = bot_chose_animation(bot_label=bot_label)
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
-    all_label_show(list_obj_labels=list_obj_labels)
 
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
@@ -62,18 +63,20 @@ def bot_chose_animation(bot_label, total_delay=700):
     return bot_chose
 
 
-def label_hide(list_obj_labels, name_label_to_show):
+def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
     for item in list_obj_labels:
         if item.name != name_label_to_show:
             item.place_forget()
 
-def all_label_show(list_obj_labels):
+      # через delay_ms снова показываем все
+    root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
+
+def all_label_show(list_obj_labels, root):
     """ Показываем все виджеты """
     for item in list_obj_labels:
-        item.place() # Чтобы в виджеты не накладывались стопкой друг на друга нужно ставить их на свои места
-                    # для этого измени функцию размещения лейбла create_widget() чтобы она сохраняла координаты в отдельное поле
-
+        item.place(x=item.x, y=item.y)
+      
 
 # Инициализация окна
 root = tk.Tk()
