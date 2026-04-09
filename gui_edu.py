@@ -13,7 +13,7 @@ def on_click(event):
     bot_move = bot_chose_animation(bot_label=bot_label)
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
-    
+
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
     """ root - основное окно / img_path - путь к картинке
@@ -63,7 +63,11 @@ def label_hide(list_obj_labels, name_label_to_show):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
     for item in list_obj_labels:
         if item.name != name_label_to_show:
-            item.place_forget()  
+            item.place_forget()
+
+def all_label_show(list_obj_labels):
+    """ Показываем все виджеты """
+    # Напиши функцию которая показывает все лейблы снова -> метод .place()
 
 # Инициализация окна
 root = tk.Tk()
