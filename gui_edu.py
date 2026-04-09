@@ -77,9 +77,24 @@ def all_label_show(list_obj_labels, root):
     for item in list_obj_labels:
         item.place(x=item.x, y=item.y)
 
-def attack(x0, y0, item):
+def attack(x0, y0, 
+           item, 
+           delay=800, 
+           frames=10, 
+           root_width=800, 
+           root_height=300):
     """ Анимация атаки предмета. Летит в центр! """
-    pass
+    item_x = item.winfo_x()
+    item_y = item.winfo_y()
+    item_width = item.winfo_width()
+    item_height = item.winfo_height()
+    path_x = (item_x - root_width // 2) + item_width // 2 
+    path_y = (item_y - root_height // 2) + item_height // 2 
+
+    def step():
+        pass
+
+    step()
       
 
 # Инициализация окна
