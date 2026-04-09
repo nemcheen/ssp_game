@@ -14,6 +14,7 @@ def on_click(event):
                )
     bot_move = bot_chose_animation(bot_label=bot_label)
     attack(choosed)
+    attack(bot_label)
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
 
@@ -72,7 +73,6 @@ def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
             item.place_forget()
         else:
             unhided = item
-    
       # через delay_ms снова показываем все
     root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
     return unhided
@@ -86,7 +86,8 @@ def attack(item,
            delay=500, 
            frames=10, 
            root_width=800, 
-           root_height=300):
+           root_height=300,
+           start_delay=850):
     """ Анимация атаки предмета. Летит в центр! """
     current_x = item_x = item.winfo_x()
     current_y = item_y = item.winfo_y()
@@ -97,11 +98,9 @@ def attack(item,
     step_x = -path_x // frames
     step_y = -path_y // frames
     step_delay = delay // frames
-    print(current_y, path_y, step_y)
     cross_middle = False
     def step():
         nonlocal path_x, path_y, current_x, current_y, cross_middle
-        print(current_y, path_y, step_y)
         if path_x * (path_x + step_x) <= 0 or path_y * (path_y + step_y) <= 0:
             cross_middle = True
         path_x += step_x
@@ -111,7 +110,7 @@ def attack(item,
         item.place(x=current_x, y=current_y)
         if not cross_middle:
             item.after(step_delay, step)
-    step()
+    item.after(start_delay, step)
       
 
 # Инициализация окна
