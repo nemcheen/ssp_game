@@ -76,6 +76,10 @@ def all_label_show(list_obj_labels, root):
     """ Показываем все виджеты """
     for item in list_obj_labels:
         item.place(x=item.x, y=item.y)
+
+def attack(x0, y0, item):
+    """ Анимация атаки предмета. Летит в центр! """
+    pass
       
 
 # Инициализация окна
