@@ -15,6 +15,7 @@ def on_click(event):
     bot_move = bot_chose_animation(bot_label=bot_label)
     attack(choosed)
     attack(bot_label)
+    bot_label.after(850, bot_label.place) # Добавить чистую функцию размещения для бота! 
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
 
