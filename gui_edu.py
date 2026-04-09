@@ -8,9 +8,12 @@ from main import bot_turn, move_result, possible_move
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
     player_move = event.widget.name
+    label_hide(list_obj_labels=list_of_obj_labels,
+               name_label_to_show=player_move)
     bot_move = bot_chose_animation(bot_label=bot_label)
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
+    
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
     """ root - основное окно / img_path - путь к картинке
