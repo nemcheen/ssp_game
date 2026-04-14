@@ -83,7 +83,7 @@ def all_label_show(list_obj_labels, root):
     for item in list_obj_labels:
         item.place(x=item.x, y=item.y)
 
-def attack(item, 
+def attack(item,
            delay=500, 
            frames=10, 
            root_width=800, 
@@ -112,7 +112,15 @@ def attack(item,
         if not cross_middle:
             item.after(step_delay, step)
     item.after(start_delay, step)
-      
+
+def attack_to_side(item,
+                   who_whins: str):
+    """ Отправляет виджет к стороне противника """
+    if who_whins == 'bot':
+        pass # летим в сторону игрока пока не долетим до края
+    elif who_whins == 'player':
+        pass # летим в сторону бота
+
 
 # Инициализация окна
 root = tk.Tk()
