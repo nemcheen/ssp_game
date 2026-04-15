@@ -29,15 +29,17 @@ def get_and_crop_img_obj(img_path, width=100, height=100):
     img_obj = ImageTk.PhotoImage(scaled)
     return img_obj    
 
-def create_widget(root, img_path, x, y, name: str, clickable=True): 
+def create_widget(root, img_path, x, y, name: str, clickable=True, default_img_path=None): 
     # добавим еще поле с дефолтной картинкой и добавим параметр в функцию
     """ root - основное окно / img_path - путь к картинке
         x, y - координаты для позициоирования картинки
         name - имя виджета, для отслеживание на что мы нажали"""
     
     photo_obj = get_and_crop_img_obj(img_path)
-
     label = tk.Label(root, image=photo_obj)
+    if default_img_path is not None:
+        default_photo_obj = get_and_crop_img_obj(default_img_path)
+        label.default_image = default_photo_obj
     label.image = photo_obj
     label.name = name
     label.x = x # !!
@@ -85,16 +87,17 @@ def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
         else:
             unhided = item
       # через delay_ms снова показываем все
-    list_obj_labels.append(bot_label)
     root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
     return unhided
 
 def all_label_show(list_obj_labels, root):
-    """ Показываем все виджеты """
+    """ Показываем все виджеты  возвращаем дефолтную картинку бот вилжету"""
     for item in list_obj_labels:
-        item.place(x=item.x, y=item.y)
         if item.name == '?':
-            pass # поставить картинку вопроса! 
+            item.configure(image=item.default_image)
+            item.image = item.default_image
+        item.place(x=item.x, y=item.y)
+        
 
 def attack(item,
            delay=500, 
@@ -149,7 +152,8 @@ bot_label = create_widget(root=root,
               x=100,
               y=80,
               name="?",
-              clickable=False)
+              clickable=False,
+              default_img_path="question-mark.png")
 
 scissors = create_widget(root=root,
               img_path="scissors.png",
@@ -167,7 +171,7 @@ paper = create_widget(root=root,
               y=80,
               name="paper")
 
-list_obj_labels = [scissors, stone, paper]
+list_obj_labels = [scissors, stone, paper, bot_label]
 
 
 root.mainloop()
