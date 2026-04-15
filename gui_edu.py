@@ -15,10 +15,17 @@ def on_click(event):
     bot_move = bot_chose_animation(bot_label=bot_label)
     attack(choosed)
     attack(bot_label)
-    bot_label.after(850, bot_label.place) # Добавить чистую функцию размещения для бота! 
+    # Функция полета применятся к тому виджету который "победил", 
+    # если ничья все возвращаются
+    # Добавить чистую функцию возвращения для бота установка знака ворпоса! 
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
 
+# Чтобы возвращать виджету бота картинку вопроса, пропишем ему поле с дефолтной картинкой
+# так же вынесем создание и подрезку фото в отдельную функцию
+def get_and_crop_img_obj(img_path):
+    pass
+    # return img_obj
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
     """ root - основное окно / img_path - путь к картинке
@@ -70,11 +77,14 @@ def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
     unhided = None
     for item in list_obj_labels:
+        if item.name == '?':
+            continue
         if item.name != name_label_to_show:
             item.place_forget()
         else:
             unhided = item
       # через delay_ms снова показываем все
+    list_obj_labels.append(bot_label)
     root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
     return unhided
 
@@ -82,6 +92,8 @@ def all_label_show(list_obj_labels, root):
     """ Показываем все виджеты """
     for item in list_obj_labels:
         item.place(x=item.x, y=item.y)
+        if item.name == '?':
+            pass # поставить картинку вопроса! 
 
 def attack(item,
            delay=500, 
@@ -121,6 +133,10 @@ def attack_to_side(item,
     elif who_whins == 'player':
         pass # летим в сторону бота
 
+
+def bot_return():
+    """ Возвращает виджет бота на место """
+    pass
 
 # Инициализация окна
 root = tk.Tk()
