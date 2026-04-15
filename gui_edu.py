@@ -23,21 +23,22 @@ def on_click(event):
 
 # Чтобы возвращать виджету бота картинку вопроса, пропишем ему поле с дефолтной картинкой
 # так же вынесем создание и подрезку фото в отдельную функцию
-def get_and_crop_img_obj(img_path):
-    pass
-    # return img_obj
+def get_and_crop_img_obj(img_path, width=100, height=100):
+    img = PILImage.open(img_path)
+    scaled = img.resize((width, height))
+    img_obj = ImageTk.PhotoImage(scaled)
+    return img_obj    
 
 def create_widget(root, img_path, x, y, name: str, clickable=True): 
+    # добавим еще поле с дефолтной картинкой и добавим параметр в функцию
     """ root - основное окно / img_path - путь к картинке
         x, y - координаты для позициоирования картинки
         name - имя виджета, для отслеживание на что мы нажали"""
     
-    img = PILImage.open(img_path)
-    scaled = img.resize((100, 100))
-    photo = ImageTk.PhotoImage(scaled)
+    photo_obj = get_and_crop_img_obj(img_path)
 
-    label = tk.Label(root, image=photo)
-    label.image = photo
+    label = tk.Label(root, image=photo_obj)
+    label.image = photo_obj
     label.name = name
     label.x = x # !!
     label.y = y # !!!
