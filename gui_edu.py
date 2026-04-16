@@ -10,11 +10,13 @@ def on_click(event):
     player_move = event.widget.name
     choosed = label_hide(root,
                list_obj_labels=list_obj_labels,
-               name_label_to_show=player_move,
+               name_label_to_show=player_move
                )
     bot_move = bot_chose_animation(bot_label=bot_label)
     attack(choosed)
     attack(bot_label)
+    explosion_animation(explosion)
+    
     # Функция полета применятся к тому виджету который "победил", 
     # если ничья все возвращаются
     # Добавить чистую функцию возвращения для бота установка знака ворпоса! 
@@ -29,13 +31,21 @@ def get_and_crop_img_obj(img_path, width=100, height=100):
     img_obj = ImageTk.PhotoImage(scaled)
     return img_obj    
 
-def create_widget(root, img_path, x, y, name: str, clickable=True, default_img_path=None): 
+def create_widget(root, 
+                  img_path, 
+                  x, y, 
+                  name: str, 
+                  clickable=True, 
+                  default_img_path=None,
+                  default_unvisible=False,
+                  width=100,
+                  height=100): 
     # добавим еще поле с дефолтной картинкой и добавим параметр в функцию
     """ root - основное окно / img_path - путь к картинке
         x, y - координаты для позициоирования картинки
         name - имя виджета, для отслеживание на что мы нажали"""
     
-    photo_obj = get_and_crop_img_obj(img_path)
+    photo_obj = get_and_crop_img_obj(img_path, width=width, height=height)
     label = tk.Label(root, image=photo_obj)
     if default_img_path is not None:
         default_photo_obj = get_and_crop_img_obj(default_img_path)
@@ -45,6 +55,8 @@ def create_widget(root, img_path, x, y, name: str, clickable=True, default_img_p
     label.x = x # !!
     label.y = y # !!!
     label.place(x=x, y=y)
+    if default_unvisible:
+        label.place_forget()
     if clickable: 
         label.configure(cursor="hand2")
         label.bind("<Button-1>", on_click)
@@ -70,7 +82,7 @@ def bot_chose_animation(bot_label, total_delay=700):
         current_step += 1
         if current_step <= bot_move_number:  # Включая финал
             step_delay = total_delay // bot_move_number
-            bot_label.after(step_delay, step)
+            root.after(step_delay, step)
     
     step()
     return bot_chose
@@ -87,10 +99,10 @@ def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
         else:
             unhided = item
       # через delay_ms снова показываем все
-    root.after(delay, all_label_show, list_obj_labels, root) # obj.after(delay, func_name, *args)
+    root.after(delay, all_label_show, list_obj_labels) # obj.after(delay, func_name, *args)
     return unhided
 
-def all_label_show(list_obj_labels, root):
+def all_label_show(list_obj_labels):
     """ Показываем все виджеты  возвращаем дефолтную картинку бот вилжету"""
     for item in list_obj_labels:
         if item.name == '?':
@@ -100,7 +112,7 @@ def all_label_show(list_obj_labels, root):
         
 
 def attack(item,
-           delay=500, 
+           delay=300, 
            frames=10, 
            root_width=800, 
            root_height=300,
@@ -126,8 +138,8 @@ def attack(item,
         current_y += step_y
         item.place(x=current_x, y=current_y)
         if not cross_middle:
-            item.after(step_delay, step)
-    item.after(start_delay, step)
+            root.after(step_delay, step)
+    root.after(start_delay, step)
 
 def attack_to_side(item,
                    who_whins: str):
@@ -136,6 +148,13 @@ def attack_to_side(item,
         pass # летим в сторону игрока пока не долетим до края
     elif who_whins == 'player':
         pass # летим в сторону бота
+
+
+def explosion_animation(item, duration=500, start_delay=1100):
+    def wrapper(item):
+        item.place(x=item.x, y=item.y)
+        root.after(duration, item.place_forget)
+    root.after(start_delay, wrapper, item)
 
 
 def bot_return():
@@ -170,6 +189,14 @@ paper = create_widget(root=root,
               x=480,
               y=80,
               name="paper")
+explosion = create_widget(root,
+                          img_path='explosion.png',
+                          x = 300,
+                          y = 50,
+                          name='explosion',
+                          default_unvisible=True,
+                          width=200,
+                          height=200)
 
 list_obj_labels = [scissors, stone, paper, bot_label]
 
