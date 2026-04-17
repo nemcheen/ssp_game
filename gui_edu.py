@@ -24,15 +24,11 @@ def on_click(event):
     explosion_animation(explosion, duration=EXPLOSION_DARATION, start_delay=EXPLOSION_DELAY)
     winner = move_result(player_move, bot_move)
     attack_to_side(bot_label, choosed, winner=winner, start_delay=WINNER_ATTACK_START_DELAY, duration=WINNER_ATTACK_DURATION)
-    
-    # Функция полета применятся к тому виджету который "победил", 
-    # если ничья все возвращаются
-    # Добавить чистую функцию возвращения для бота установка знака ворпоса! 
+   
     print(f'player move: {player_move}, bot move: {bot_move}')
     move_result(player_move, bot_move)
 
-# Чтобы возвращать виджету бота картинку вопроса, пропишем ему поле с дефолтной картинкой
-# так же вынесем создание и подрезку фото в отдельную функцию
+
 def get_and_crop_img_obj(img_path, width=100, height=100):
     img = PILImage.open(img_path)
     scaled = img.resize((width, height))
@@ -182,10 +178,21 @@ def explosion_animation(item, duration=500, start_delay=1100):
         root.after(duration, item.place_forget)
     root.after(start_delay, wrapper, item)
 
-
-def bot_return():
-    """ Возвращает виджет бота на место """
-    pass
+def create_healthbar(root,
+                     x,
+                     y,
+                     width,
+                     height,
+                     gap=1,
+                     out_color='red',
+                     inner_color='green',):
+    width = width // 10
+    height = height // 20
+    outer = tk.Label(root, bg=out_color, width=width, height=height)
+    outer.place(x=x, y=y)
+    inner_width, inner_height = width - gap, height - 2*gap
+    inner = tk.Label(root, bg=inner_color, width=inner_width, height=inner_height)
+    inner.place(x = x + gap, y = y + gap)
 
 # Инициализация окна
 root = tk.Tk()
@@ -223,6 +230,10 @@ explosion = create_widget(root,
                           default_unvisible=True,
                           width=200,
                           height=200)
+
+bot_health = create_healthbar(root, x=20, y=20, width=300, height=20)
+player_health = create_healthbar(root, x=580-20, y=20, width=300, height=20)
+
 
 list_obj_labels = [scissors, stone, paper, bot_label]
 
