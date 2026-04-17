@@ -23,21 +23,7 @@ def on_click(event):
     attack(bot_label, start_delay=ATTACK_START_DELAY, duration=ATTACK_DURATION)
     explosion_animation(explosion, duration=EXPLOSION_DARATION, start_delay=EXPLOSION_DELAY)
     winner = move_result(player_move, bot_move)
-    if winner == 'bot':
-        attack(bot_label, 
-               duration=WINNER_ATTACK_DURATION, 
-               target_x=800, 
-               start_delay=WINNER_ATTACK_START_DELAY)
-        one_item_hide(choosed, start_delay=WINNER_ATTACK_START_DELAY)
-    elif winner == 'player':
-        attack(choosed,
-               duration=WINNER_ATTACK_DURATION, 
-               target_x=0, 
-               start_delay=WINNER_ATTACK_START_DELAY)
-        one_item_hide(bot_label, start_delay=WINNER_ATTACK_START_DELAY)
-    else:
-        one_item_hide(choosed, start_delay=WINNER_ATTACK_START_DELAY)
-        one_item_hide(bot_label, start_delay=WINNER_ATTACK_START_DELAY)
+    attack_to_side(bot_label, choosed, winner=winner, start_delay=WINNER_ATTACK_START_DELAY, duration=WINNER_ATTACK_DURATION)
     
     # Функция полета применятся к тому виджету который "победил", 
     # если ничья все возвращаются
@@ -167,13 +153,27 @@ def attack(item,
             root.after(step_delay, step)
     root.after(start_delay, step)
 
-def attack_to_side(item,
-                   who_whins: str):
-    """ Отправляет виджет к стороне противника """
-    if who_whins == 'bot':
-        pass # летим в сторону игрока пока не долетим до края
-    elif who_whins == 'player':
-        pass # летим в сторону бота
+def attack_to_side(bot_label,
+                   player_label,
+                   winner: str,
+                   start_delay=WINNER_ATTACK_START_DELAY,
+                   duration=WINNER_ATTACK_DURATION):
+    """ Отправляет виджет к стороне противника или ничего если draw"""
+    if winner == 'bot':
+        attack(bot_label, 
+               duration=duration, 
+               target_x=800, 
+               start_delay=start_delay)
+        one_item_hide(player_label, start_delay=start_delay)
+    elif winner == 'player':
+        attack(player_label,
+               duration=duration, 
+               target_x=0, 
+               start_delay=start_delay)
+        one_item_hide(bot_label, start_delay=start_delay)
+    else:
+        one_item_hide(player_label, start_delay=start_delay)
+        one_item_hide(bot_label, start_delay=start_delay)
 
 
 def explosion_animation(item, duration=500, start_delay=1100):
