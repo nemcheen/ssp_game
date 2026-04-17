@@ -1,21 +1,43 @@
 import tkinter as tk
 from random import randint
-import time
 from PIL import ImageTk, Image as PILImage
 from main import bot_turn, move_result, possible_move
 
+
+BOT_CHOSE_DURATION = 700
+ATTACK_START_DELAY, ATTACK_DURATION = 850, 250
+EXPLOSION_DELAY, EXPLOSION_DARATION = 1150, 500
+WINNER_ATTACK_START_DELAY, WINNER_ATTACK_DURATION = 1600, 250
+HIDE_DURATION = 2500
 
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
     player_move = event.widget.name
     choosed = label_hide(root,
                list_obj_labels=list_obj_labels,
-               name_label_to_show=player_move
+               name_label_to_show=player_move,
+               duration=HIDE_DURATION
                )
-    bot_move = bot_chose_animation(bot_label=bot_label)
-    attack(choosed)
-    attack(bot_label)
-    explosion_animation(explosion)
+    bot_move = bot_chose_animation(bot_label=bot_label, duration=BOT_CHOSE_DURATION)
+    attack(choosed, start_delay=ATTACK_START_DELAY, duration=ATTACK_DURATION)
+    attack(bot_label, start_delay=ATTACK_START_DELAY, duration=ATTACK_DURATION)
+    explosion_animation(explosion, duration=EXPLOSION_DARATION, start_delay=EXPLOSION_DELAY)
+    winner = move_result(player_move, bot_move)
+    if winner == 'bot':
+        attack(bot_label, 
+               duration=WINNER_ATTACK_DURATION, 
+               target_x=800, 
+               start_delay=WINNER_ATTACK_START_DELAY)
+        one_item_hide(choosed, start_delay=WINNER_ATTACK_START_DELAY)
+    elif winner == 'player':
+        attack(choosed,
+               duration=WINNER_ATTACK_DURATION, 
+               target_x=0, 
+               start_delay=WINNER_ATTACK_START_DELAY)
+        one_item_hide(bot_label, start_delay=WINNER_ATTACK_START_DELAY)
+    else:
+        one_item_hide(choosed, start_delay=WINNER_ATTACK_START_DELAY)
+        one_item_hide(bot_label, start_delay=WINNER_ATTACK_START_DELAY)
     
     # Функция полета применятся к тому виджету который "победил", 
     # если ничья все возвращаются
@@ -62,7 +84,7 @@ def create_widget(root,
         label.bind("<Button-1>", on_click)
     return label
 
-def bot_chose_animation(bot_label, total_delay=700):
+def bot_chose_animation(bot_label, duration=700):
     """ Анимация выбора хода ботом. """
     image_paths = ('scissors.png', 'stone.png', 'paper.png')
     images = []
@@ -81,14 +103,18 @@ def bot_chose_animation(bot_label, total_delay=700):
         bot_label.image = image
         current_step += 1
         if current_step <= bot_move_number:  # Включая финал
-            step_delay = total_delay // bot_move_number
+            step_delay = duration // bot_move_number
             root.after(step_delay, step)
     
     step()
     return bot_chose
 
+def one_item_hide(item, start_delay=0):
+    def wrapper(item):
+        item.place_forget()
+    item.after(start_delay, wrapper, item)
 
-def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
+def label_hide(root, list_obj_labels, name_label_to_show, duration=2000):
     """ Скрываем остальные лейблы предметов кроме того что выбрал игрок """
     unhided = None
     for item in list_obj_labels:
@@ -99,7 +125,7 @@ def label_hide(root, list_obj_labels, name_label_to_show, delay=2000):
         else:
             unhided = item
       # через delay_ms снова показываем все
-    root.after(delay, all_label_show, list_obj_labels) # obj.after(delay, func_name, *args)
+    root.after(duration, all_label_show, list_obj_labels) # obj.after(delay, func_name, *args)
     return unhided
 
 def all_label_show(list_obj_labels):
@@ -112,21 +138,21 @@ def all_label_show(list_obj_labels):
         
 
 def attack(item,
-           delay=300, 
-           frames=10, 
-           root_width=800, 
-           root_height=300,
+           duration=300, 
+           frames=10,
+           target_x=(800 // 2),
+           target_y=(300 // 2),
            start_delay=850):
     """ Анимация атаки предмета. Летит в центр! """
     current_x = item_x = item.winfo_x()
     current_y = item_y = item.winfo_y()
     item_width = item.winfo_width()
     item_height = item.winfo_height()
-    path_x = (item_x - root_width // 2) + item_width // 2 
-    path_y = (item_y - root_height // 2) + item_height // 2 
+    path_x = (item_x - target_x) + item_width // 2 
+    path_y = (item_y - target_y) + item_height // 2 
     step_x = -path_x // frames
     step_y = -path_y // frames
-    step_delay = delay // frames
+    step_delay = duration // frames
     cross_middle = False
     def step():
         nonlocal path_x, path_y, current_x, current_y, cross_middle
