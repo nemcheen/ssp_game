@@ -29,18 +29,23 @@ def player_turn() -> str:
     print(f'Your move is {player_move}.')
     return player_move
 
-def move_result(player_move: str, bot_move: str) -> None:
+def move_result(player_move: str, bot_move: str) -> str:
     game_score['total_move'] += 1
     idx_player_move = possible_move.index(player_move)
     idx_bot_move = possible_move.index(bot_move)
+    winner = 'draw'
     if (idx_player_move - idx_bot_move) == 1 or (idx_player_move - idx_bot_move) == -2:
         game_score['player_score'] += 1
         print('Player win')
+        winner = 'player'
     elif player_move == bot_move:
         print('draw')
     else:
         game_score['bot_score'] += 1
         print('Bot win')
+        winner = 'bot'
+    return winner
+    
 
 
 def main_game() -> None:
