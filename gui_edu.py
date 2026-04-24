@@ -183,16 +183,17 @@ def create_healthbar(root,
                      y,
                      width,
                      height,
-                     gap=1,
                      out_color='red',
                      inner_color='green',):
-    width = width // 10
-    height = height // 20
-    outer = tk.Label(root, bg=out_color, width=width, height=height)
+    
+    outer = tk.Frame(root, bg=out_color, width=width, height=height)
     outer.place(x=x, y=y)
-    inner_width, inner_height = width - gap, height - 2*gap
-    inner = tk.Label(root, bg=inner_color, width=inner_width, height=inner_height)
-    inner.place(x = x + gap, y = y + gap)
+    outer.update_idletasks()
+    inner = tk.Frame(root, bg=inner_color, width=width, height=height)
+    inner.place(x = x, y = y)
+
+    return inner
+
 
 # Инициализация окна
 root = tk.Tk()
@@ -229,10 +230,10 @@ explosion = create_widget(root,
                           name='explosion',
                           default_unvisible=True,
                           width=200,
-                          height=200)
+                          height=200)s
 
 bot_health = create_healthbar(root, x=20, y=20, width=300, height=20)
-player_health = create_healthbar(root, x=580-20, y=20, width=300, height=20)
+player_health = create_healthbar(root, x=490, y=20, width=300, height=20)
 
 
 list_obj_labels = [scissors, stone, paper, bot_label]
