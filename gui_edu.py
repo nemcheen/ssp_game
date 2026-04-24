@@ -22,12 +22,10 @@ def on_click(event):
     attack(choosed, start_delay=ATTACK_START_DELAY, duration=ATTACK_DURATION)
     attack(bot_label, start_delay=ATTACK_START_DELAY, duration=ATTACK_DURATION)
     explosion_animation(explosion, duration=EXPLOSION_DARATION, start_delay=EXPLOSION_DELAY)
+    print(f'player move: {player_move}, bot move: {bot_move}')
     winner = move_result(player_move, bot_move)
     attack_to_side(bot_label, choosed, winner=winner, start_delay=WINNER_ATTACK_START_DELAY, duration=WINNER_ATTACK_DURATION)
-   
-    print(f'player move: {player_move}, bot move: {bot_move}')
-    move_result(player_move, bot_move)
-
+    down_health(bot_health, player_health, who_wins=winner)
 
 def get_and_crop_img_obj(img_path, width=100, height=100):
     img = PILImage.open(img_path)
@@ -155,22 +153,26 @@ def attack_to_side(bot_label,
                    start_delay=WINNER_ATTACK_START_DELAY,
                    duration=WINNER_ATTACK_DURATION):
     """ Отправляет виджет к стороне противника или ничего если draw"""
+    win_item = None
     if winner == 'bot':
         attack(bot_label, 
                duration=duration, 
                target_x=800, 
                start_delay=start_delay)
         one_item_hide(player_label, start_delay=start_delay)
+        win_item = bot_label
     elif winner == 'player':
         attack(player_label,
                duration=duration, 
                target_x=0, 
                start_delay=start_delay)
         one_item_hide(bot_label, start_delay=start_delay)
+        win_item = player_label
     else:
         one_item_hide(player_label, start_delay=start_delay)
         one_item_hide(bot_label, start_delay=start_delay)
 
+    return win_item
 
 def explosion_animation(item, duration=500, start_delay=1100):
     def wrapper(item):
@@ -191,8 +193,26 @@ def create_healthbar(root,
     outer.update_idletasks()
     inner = tk.Frame(root, bg=inner_color, width=width, height=height)
     inner.place(x = x, y = y)
+    inner.update_idletasks()
 
     return inner
+
+def down_health(inner_bot, inner_player, who_wins='draw'):
+    
+    if who_wins == 'bot':
+        inner = inner_player
+    elif who_wins == 'player':
+        inner = inner_bot
+    else:
+        return
+    
+    current_width = inner.winfo_width()
+    current_x = inner.winfo_x()
+    new_width = max(int(current_width - 10), 0)
+    inner.config(width=new_width)
+    if who_wins == 'bot':
+        new_x = max(current_x + 10, 0)
+        inner.place(x=new_x)
 
 
 # Инициализация окна
@@ -230,11 +250,10 @@ explosion = create_widget(root,
                           name='explosion',
                           default_unvisible=True,
                           width=200,
-                          height=200)s
+                          height=200)
 
 bot_health = create_healthbar(root, x=20, y=20, width=300, height=20)
 player_health = create_healthbar(root, x=490, y=20, width=300, height=20)
-
 
 list_obj_labels = [scissors, stone, paper, bot_label]
 
