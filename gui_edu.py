@@ -9,10 +9,14 @@ ATTACK_START_DELAY, ATTACK_DURATION = 850, 250
 EXPLOSION_DELAY, EXPLOSION_DARATION = 1150, 500
 WINNER_ATTACK_START_DELAY, WINNER_ATTACK_DURATION = 1600, 250
 TEXT_START_DELAY, TEXT_DURATION = 1800, 1000
+DOWN_HEALTH_START_DELAY = 2000
 HIDE_DURATION = 2500
+
 
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
+    if not event.widget.clickable:
+        return
     player_move = event.widget.name
     choosed = label_hide(root,
                list_obj_labels=list_obj_labels,
@@ -27,6 +31,11 @@ def on_click(event):
     winner = move_result(player_move, bot_move)
     attack_to_side(bot_label, choosed, winner=winner, start_delay=WINNER_ATTACK_START_DELAY, duration=WINNER_ATTACK_DURATION)
     down_health(bot_health, player_health, who_wins=winner)
+    is_finish(bot_health, player_health)
+    print(type(is_finish))
+    print(f'finish_yet = {is_finish}')   
+    for item in list_obj_labels:
+        print(f'{item.name}: clickable is {item.clickable}')
 
 def get_and_crop_img_obj(img_path, width=100, height=100):
     img = PILImage.open(img_path)
@@ -55,6 +64,7 @@ def create_widget(root,
         label.default_image = default_photo_obj
     label.image = photo_obj
     label.name = name
+    label.clickable = clickable
     label.x = x # !!
     label.y = y # !!!
     label.place(x=x, y=y)
@@ -199,22 +209,31 @@ def create_healthbar(root,
 
     return inner
 
-def down_health(inner_bot, inner_player, who_wins='draw'):
+def down_health(inner_bot, 
+                inner_player, 
+                who_wins='draw', 
+                start_delay=DOWN_HEALTH_START_DELAY,
+                default_damage=400):
     
     if who_wins == 'bot':
         inner = inner_player
     elif who_wins == 'player':
         inner = inner_bot
     else:
-        return
-    
-    current_width = inner.winfo_width()
-    current_x = inner.winfo_x()
-    new_width = max(int(current_width - 10), 0)
-    inner.config(width=new_width)
-    if who_wins == 'bot':
-        new_x = max(current_x + 10, 0)
-        inner.place(x=new_x)
+        inner = None
+
+    def wrapper():
+        if inner is not None:
+            current_width = inner.winfo_width()
+            current_x = inner.winfo_x()
+            new_width = max(int(current_width - default_damage), 0)
+            inner.config(width=new_width)
+            if who_wins == 'bot':
+                new_x = max(current_x + default_damage, 0)
+                inner.place(x=new_x)
+
+    root.after(start_delay, wrapper)   
+
 
 def place_text(root, text, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION ):
     def wrapper():
@@ -226,6 +245,14 @@ def place_text(root, text, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION 
     root.after(start_delay, wrapper)
     
 
+def freeze_object(item):
+    item.clickable = False
+
+def is_finish(*healthbars):
+    def wrapper():
+        if any(item.winfo_width() == 1 for item in healthbars):
+            list(map(freeze_object, list_obj_labels))
+    root.after(DOWN_HEALTH_START_DELAY + 10, wrapper)
 
 # Инициализация окна
 root = tk.Tk()
@@ -268,6 +295,5 @@ bot_health = create_healthbar(root, x=20, y=20, width=300, height=20)
 player_health = create_healthbar(root, x=490, y=20, width=300, height=20)
 
 list_obj_labels = [scissors, stone, paper, bot_label]
-
 
 root.mainloop()
