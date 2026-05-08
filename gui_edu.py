@@ -8,6 +8,7 @@ BOT_CHOSE_DURATION = 700
 ATTACK_START_DELAY, ATTACK_DURATION = 850, 250
 EXPLOSION_DELAY, EXPLOSION_DARATION = 1150, 500
 WINNER_ATTACK_START_DELAY, WINNER_ATTACK_DURATION = 1600, 250
+TEXT_START_DELAY, TEXT_DURATION = 1800, 1000
 HIDE_DURATION = 2500
 
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
@@ -186,11 +187,12 @@ def create_healthbar(root,
                      width,
                      height,
                      out_color='red',
-                     inner_color='green',):
+                     inner_color='green'):
     
     outer = tk.Frame(root, bg=out_color, width=width, height=height)
     outer.place(x=x, y=y)
     outer.update_idletasks()
+
     inner = tk.Frame(root, bg=inner_color, width=width, height=height)
     inner.place(x = x, y = y)
     inner.update_idletasks()
@@ -213,6 +215,16 @@ def down_health(inner_bot, inner_player, who_wins='draw'):
     if who_wins == 'bot':
         new_x = max(current_x + 10, 0)
         inner.place(x=new_x)
+
+def place_text(root, text, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION ):
+    def wrapper():
+        label = tk.Label(root, 
+                        text=text, 
+                        font=("Arial", 16, "bold"), 
+                        fg="blue")
+        label.place(x=400, y=150, width=200, height=40)
+    root.after(start_delay, wrapper)
+    
 
 
 # Инициализация окна
