@@ -32,10 +32,6 @@ def on_click(event):
     attack_to_side(bot_label, choosed, winner=winner, start_delay=WINNER_ATTACK_START_DELAY, duration=WINNER_ATTACK_DURATION)
     down_health(bot_health, player_health, who_wins=winner)
     is_finish(bot_health, player_health)
-    print(type(is_finish))
-    print(f'finish_yet = {is_finish}')   
-    for item in list_obj_labels:
-        print(f'{item.name}: clickable is {item.clickable}')
 
 def get_and_crop_img_obj(img_path, width=100, height=100):
     img = PILImage.open(img_path)
@@ -196,6 +192,7 @@ def create_healthbar(root,
                      y,
                      width,
                      height,
+                     name,
                      out_color='red',
                      inner_color='green'):
     
@@ -206,6 +203,7 @@ def create_healthbar(root,
     inner = tk.Frame(root, bg=inner_color, width=width, height=height)
     inner.place(x = x, y = y)
     inner.update_idletasks()
+    inner.name = name
 
     return inner
 
@@ -235,14 +233,25 @@ def down_health(inner_bot,
     root.after(start_delay, wrapper)   
 
 
-def place_text(root, text, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION ):
-    def wrapper():
+def place_text(root, winner, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION ):
+    label = None
+    text = f'Winer is {winner}! Finita!'
+    def show_text():
+        nonlocal label
         label = tk.Label(root, 
                         text=text, 
-                        font=("Arial", 16, "bold"), 
+                        font=("Arial", 22, "bold"), 
                         fg="blue")
         label.place(x=400, y=150, width=200, height=40)
-    root.after(start_delay, wrapper)
+        root.after(duration, hide_text)
+
+    def hide_text():
+        nonlocal label
+        if label is not None:
+            label.destroy()
+            label = None
+
+    root.after(start_delay, show_text)
     
 
 def freeze_object(item):
@@ -250,9 +259,17 @@ def freeze_object(item):
 
 def is_finish(*healthbars):
     def wrapper():
-        if any(item.winfo_width() == 1 for item in healthbars):
-            list(map(freeze_object, list_obj_labels))
+        for health in healthbars:
+            if health.winfo_width() == 1:
+                looser = health.name
+                list(map(freeze_object, list_obj_labels))
+                winner = 'Player' if looser == 'Bot' else 'Bot'
+                place_text(root, 
+                           winner=winner, 
+                           start_delay=0, 
+                           duration=TEXT_DURATION)
     root.after(DOWN_HEALTH_START_DELAY + 10, wrapper)
+
 
 # Инициализация окна
 root = tk.Tk()
@@ -291,8 +308,8 @@ explosion = create_widget(root,
                           width=200,
                           height=200)
 
-bot_health = create_healthbar(root, x=20, y=20, width=300, height=20)
-player_health = create_healthbar(root, x=490, y=20, width=300, height=20)
+bot_health = create_healthbar(root, name='Bot', x=20, y=20, width=300, height=20)
+player_health = create_healthbar(root, name='Player', x=490, y=20, width=300, height=20)
 
 list_obj_labels = [scissors, stone, paper, bot_label]
 
