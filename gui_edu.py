@@ -8,7 +8,7 @@ BOT_CHOSE_DURATION = 700
 ATTACK_START_DELAY, ATTACK_DURATION = 850, 250
 EXPLOSION_DELAY, EXPLOSION_DARATION = 1150, 500
 WINNER_ATTACK_START_DELAY, WINNER_ATTACK_DURATION = 1600, 250
-TEXT_START_DELAY, TEXT_DURATION = 1800, 1000
+TEXT_START_DELAY, TEXT_DURATION = 1800, 3000
 DOWN_HEALTH_START_DELAY = 2000
 HIDE_DURATION = 2500
 
@@ -235,14 +235,14 @@ def down_health(inner_bot,
 
 def place_text(root, winner, start_delay=TEXT_START_DELAY, duration=TEXT_DURATION ):
     label = None
-    text = f'Winer is {winner}! Finita!'
+    text = f'{winner} wins! Finita!'
     def show_text():
         nonlocal label
         label = tk.Label(root, 
                         text=text, 
-                        font=("Arial", 22, "bold"), 
+                        font=("Arial", 18, "bold"), 
                         fg="blue")
-        label.place(x=400, y=150, width=200, height=40)
+        label.place(x=400, y=250, width=300, height=40)
         root.after(duration, hide_text)
 
     def hide_text():
@@ -268,7 +268,7 @@ def is_finish(*healthbars):
                            winner=winner, 
                            start_delay=0, 
                            duration=TEXT_DURATION)
-    root.after(DOWN_HEALTH_START_DELAY + 10, wrapper)
+    root.after(DOWN_HEALTH_START_DELAY + 100, wrapper)
 
 
 # Инициализация окна
