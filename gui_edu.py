@@ -1,3 +1,5 @@
+import sys
+import os
 import tkinter as tk
 import pygame
 import random
@@ -14,6 +16,17 @@ TEXT_START_DELAY, TEXT_DURATION = 1800, 3000
 DOWN_HEALTH_START_DELAY = 2000
 HIDE_DURATION = 2500
 
+def get_resource_path(relative_path):
+    """ Получает путь к ресурсу, работает для .py и для собранного .exe """
+    if getattr(sys, 'frozen', False):
+        # Если запущено как собранный файл, ищем в папке исполнения
+        # Для Nuitka в режиме --onefile ресурсы лежат в папке скрипта
+        base_path = os.path.dirname(sys.argv[0])
+    else:
+        # Если запущено как обычный скрипт
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    return os.path.join(base_path, relative_path)
 
 # Функция вызываемая при нажатии на виджет. Вызывает ход игры
 def on_click(event):
@@ -76,14 +89,16 @@ def create_widget(root,
 
 def bot_chose_animation(bot_label, duration=700):
     """ Анимация выбора хода ботом. """
-    image_paths = ('scissors.png', 'stone.png', 'paper.png')
+    image_paths = tuple(map(get_resource_path, ('img/scissors.png', 'img/stone.png', 'img/paper.png')))
+    moves = ('scissors', 'stone', 'paper')
     images = []
     for path in image_paths:
         img = PILImage.open(path).resize((100, 100))
         images.append(ImageTk.PhotoImage(img))
     bot_move_number = randint(9, 11)
     current_step = 0
-    bot_chose = image_paths[bot_move_number % 3].split('.')[0]
+    bot_chose = moves[bot_move_number % 3]
+    print(bot_chose)
     
     def step():
         nonlocal current_step
@@ -296,13 +311,13 @@ pygame.mixer.init()
 pygame.mixer.set_num_channels(8)
 
 sounds = {
-    "boom": [r'C:/Code/NewGame/sounds/zvuk-vzryva-trek-cut.mp3'],
-    "choosing": [r'C:/Code/NewGame/sounds/go-new-gambling_cut.mp3'],
-    "missle": [r'C:/Code/NewGame/sounds/missle_cut.mp3'],
-    "damage": [r'C:/Code/NewGame/sounds/bhit-helmet-cut.mp3'],
-    "loose": [r'C:/Code/NewGame/sounds/game_over.mp3'],
-    "win": [r'C:/Code/NewGame/sounds/win.mp3'],
-    "click": [r'C:/Code/NewGame/sounds/buttonclickrelease.mp3'],
+    "boom": [get_resource_path('sounds/zvuk-vzryva-trek-cut.mp3')],
+    "choosing": [get_resource_path('sounds/go-new-gambling_cut.mp3')],
+    "missle": [get_resource_path('sounds/missle_cut.mp3')],
+    "damage": [get_resource_path('sounds/bhit-helmet-cut.mp3')],
+    "loose": [get_resource_path('sounds/game_over.mp3')],
+    "win": [get_resource_path('sounds/win.mp3')],
+    "click": [get_resource_path('sounds/buttonclickrelease.mp3')],
 
 }
 
@@ -313,30 +328,30 @@ channels = {
 }
 
 bot_label = create_widget(root=root,
-              img_path=r"C:/Code/NewGame/question-mark.png",
+              img_path=get_resource_path("img/question-mark.png"),
               x=100,
               y=80,
               name="?",
               clickable=False,
-              default_img_path=r"C:/Code/NewGame/question-mark.png")
+              default_img_path=get_resource_path("img/question-mark.png"))
 
 scissors = create_widget(root=root,
-              img_path=r"C:/Code/NewGame/scissors.png",
+              img_path=get_resource_path("img/scissors.png"),
               x=680,
               y=80,
               name="scissors")
 stone = create_widget(root=root,
-              img_path=r"C:/Code/NewGame/stone.png",
+              img_path=get_resource_path("img/stone.png"),
               x=580,
               y=80,
               name="stone")
 paper = create_widget(root=root,
-              img_path=r"C:/Code/NewGame/paper.png",
+              img_path=get_resource_path("img/paper.png"),
               x=480,
               y=80,
               name="paper")
 explosion = create_widget(root,
-                          img_path=r"C:/Code/NewGame/explosion.png",
+                          img_path=get_resource_path("img/explosion.png"),
                           x = 300,
                           y = 50,
                           name='explosion',
