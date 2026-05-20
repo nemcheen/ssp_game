@@ -1,4 +1,6 @@
 import tkinter as tk
+import pygame
+import random
 from random import randint
 from PIL import ImageTk, Image as PILImage
 from main import bot_turn, move_result, possible_move
@@ -17,6 +19,7 @@ HIDE_DURATION = 2500
 def on_click(event):
     if not event.widget.clickable:
         return
+    play_sound('click')
     player_move = event.widget.name
     choosed = label_hide(root,
                list_obj_labels=list_obj_labels,
@@ -94,6 +97,7 @@ def bot_chose_animation(bot_label, duration=700):
             root.after(step_delay, step)
     
     step()
+    play_sound('choosing', 'sfx1')
     return bot_chose
 
 def one_item_hide(item, start_delay=0):
@@ -142,6 +146,7 @@ def attack(item,
     step_delay = duration // frames
     cross_middle = False
     def step():
+        play_sound('missle', 'sfx2')
         nonlocal path_x, path_y, current_x, current_y, cross_middle
         if path_x * (path_x + step_x) <= 0 or path_y * (path_y + step_y) <= 0:
             cross_middle = True
@@ -185,6 +190,7 @@ def explosion_animation(item, duration=500, start_delay=1100):
     def wrapper(item):
         item.place(x=item.x, y=item.y)
         root.after(duration, item.place_forget)
+        play_sound('boom', 'sfx1')
     root.after(start_delay, wrapper, item)
 
 def create_healthbar(root,
@@ -211,7 +217,7 @@ def down_health(inner_bot,
                 inner_player, 
                 who_wins='draw', 
                 start_delay=DOWN_HEALTH_START_DELAY,
-                default_damage=400):
+                default_damage=40):
     
     if who_wins == 'bot':
         inner = inner_player
@@ -222,6 +228,7 @@ def down_health(inner_bot,
 
     def wrapper():
         if inner is not None:
+            play_sound('damage', 'sfx1')
             current_width = inner.winfo_width()
             current_x = inner.winfo_x()
             new_width = max(int(current_width - default_damage), 0)
@@ -264,43 +271,72 @@ def is_finish(*healthbars):
                 looser = health.name
                 list(map(freeze_object, list_obj_labels))
                 winner = 'Player' if looser == 'Bot' else 'Bot'
+                if winner == 'Player':
+                    play_sound('win', 'ui')
+                else:
+                    play_sound('loose', 'ui')
                 place_text(root, 
                            winner=winner, 
                            start_delay=0, 
                            duration=TEXT_DURATION)
     root.after(DOWN_HEALTH_START_DELAY + 100, wrapper)
 
-
+def play_sound(name, channel_name='ui'):
+    sound = random.choice(sounds[name])
+    if channel_name is None:
+        sound.play()
+    else:
+        channels[channel_name].play(pygame.mixer.Sound(sound))
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
 root.title("Игра Камень/Ножницы/Бумага")
 
+pygame.mixer.init()
+pygame.mixer.set_num_channels(8)
+
+sounds = {
+    "boom": [r'C:/Code/NewGame/sounds/zvuk-vzryva-trek-cut.mp3'],
+    "choosing": [r'C:/Code/NewGame/sounds/go-new-gambling_cut.mp3'],
+    "missle": [r'C:/Code/NewGame/sounds/missle_cut.mp3'],
+    "damage": [r'C:/Code/NewGame/sounds/bhit-helmet-cut.mp3'],
+    "loose": [r'C:/Code/NewGame/sounds/game_over.mp3'],
+    "win": [r'C:/Code/NewGame/sounds/win.mp3'],
+    "click": [r'C:/Code/NewGame/sounds/buttonclickrelease.mp3'],
+
+}
+
+channels = {
+    "ui": pygame.mixer.Channel(0),
+    "sfx1": pygame.mixer.Channel(1),
+    "sfx2": pygame.mixer.Channel(2),
+}
+
 bot_label = create_widget(root=root,
-              img_path="question-mark.png",
+              img_path=r"C:/Code/NewGame/question-mark.png",
               x=100,
               y=80,
               name="?",
               clickable=False,
-              default_img_path="question-mark.png")
+              default_img_path=r"C:/Code/NewGame/question-mark.png")
 
 scissors = create_widget(root=root,
-              img_path="scissors.png",
+              img_path=r"C:/Code/NewGame/scissors.png",
               x=680,
               y=80,
               name="scissors")
 stone = create_widget(root=root,
-              img_path="stone.png",
+              img_path=r"C:/Code/NewGame/stone.png",
               x=580,
               y=80,
               name="stone")
 paper = create_widget(root=root,
-              img_path="paper.png",
+              img_path=r"C:/Code/NewGame/paper.png",
               x=480,
               y=80,
               name="paper")
 explosion = create_widget(root,
-                          img_path='explosion.png',
+                          img_path=r"C:/Code/NewGame/explosion.png",
                           x = 300,
                           y = 50,
                           name='explosion',
