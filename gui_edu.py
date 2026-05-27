@@ -296,16 +296,15 @@ def is_finish(*healthbars):
                            duration=TEXT_DURATION)
     root.after(DOWN_HEALTH_START_DELAY + 100, wrapper)
 
-def play_sound(name, channel_name='ui'):
-    sound = random.choice(sounds[name])
-    if channel_name is None:
-        sound.play()
-    else:
-        channels[channel_name].play(pygame.mixer.Sound(sound))
+def play_sound(sound_name, sound_channel='ui'):
+    sound = random.choice(sounds[sound_name])
+    channels[sound_channel].play(pygame.mixer.Sound(sound))
+
 # Инициализация окна
 root = tk.Tk()
 root.geometry("800x300")
 root.title("Игра Камень/Ножницы/Бумага")
+root.iconbitmap(get_resource_path('img/favicon.ico'))
 
 pygame.mixer.init()
 pygame.mixer.set_num_channels(8)
